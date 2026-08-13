@@ -194,14 +194,18 @@ COPY scripts/check-env.py scripts/
 # keeping for backward compatibility
 COPY --chmod=755 ./docker/entrypoints/run-server.sh /usr/bin/
 
-# Some debian libs
+# Some debian libs. Only the runtime shared libraries belong here, as this stage
+# is the base of the production images. The matching `-dev` packages pull in a
+# whole build toolchain (libc6-dev, linux-libc-dev, zlib1g-dev, ...) that would
+# otherwise be baked into the final image, so they're installed only in the
+# stages that actually compile native extensions.
 RUN /app/docker/apt-install.sh \
       curl \
-      libsasl2-dev \
+      libsasl2-2 \
       libsasl2-modules-gssapi-mit \
-      libpq-dev \
-      libecpg-dev \
-      libldap2-dev
+      libpq5 \
+      libecpg6 \
+      libldap2
 
 # Create data directory for DuckDB examples database
 # The database file will be created at runtime when examples are loaded from Parquet files
@@ -250,11 +254,17 @@ USER superset
 ######################################################################
 FROM python-common AS dev
 
-# Debian libs needed for dev
+# Debian libs needed for dev, including the headers required to compile the
+# native extensions pulled in by requirements/development.txt (python-ldap,
+# sasl, mysqlclient, ...)
 RUN /app/docker/apt-install.sh \
     git \
     pkg-config \
-    default-libmysqlclient-dev
+    default-libmysqlclient-dev \
+    libecpg-dev \
+    libldap2-dev \
+    libpq-dev \
+    libsasl2-dev
 
 # Copy development requirements and install them
 COPY requirements/*.txt requirements/
