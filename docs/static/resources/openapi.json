@@ -1689,7 +1689,10 @@
             "readOnly": true
           },
           "dashboards": {
-            "$ref": "#/components/schemas/ChartDataRestApi.get_list.Dashboard"
+            "items": {
+              "$ref": "#/components/schemas/ChartDataRestApi.get_list.Dashboard"
+            },
+            "type": "array"
           },
           "datasource_id": {
             "nullable": true,
@@ -1734,7 +1737,10 @@
             "$ref": "#/components/schemas/ChartDataRestApi.get_list.User2"
           },
           "owners": {
-            "$ref": "#/components/schemas/ChartDataRestApi.get_list.User3"
+            "items": {
+              "$ref": "#/components/schemas/ChartDataRestApi.get_list.User3"
+            },
+            "type": "array"
           },
           "params": {
             "nullable": true,
@@ -1752,7 +1758,10 @@
             "$ref": "#/components/schemas/ChartDataRestApi.get_list.SqlaTable"
           },
           "tags": {
-            "$ref": "#/components/schemas/ChartDataRestApi.get_list.Tag"
+            "items": {
+              "$ref": "#/components/schemas/ChartDataRestApi.get_list.Tag"
+            },
+            "type": "array"
           },
           "thumbnail_url": {
             "readOnly": true
@@ -2440,7 +2449,10 @@
             "readOnly": true
           },
           "dashboards": {
-            "$ref": "#/components/schemas/ChartRestApi.get_list.Dashboard"
+            "items": {
+              "$ref": "#/components/schemas/ChartRestApi.get_list.Dashboard"
+            },
+            "type": "array"
           },
           "datasource_id": {
             "nullable": true,
@@ -2485,7 +2497,10 @@
             "$ref": "#/components/schemas/ChartRestApi.get_list.User2"
           },
           "owners": {
-            "$ref": "#/components/schemas/ChartRestApi.get_list.User3"
+            "items": {
+              "$ref": "#/components/schemas/ChartRestApi.get_list.User3"
+            },
+            "type": "array"
           },
           "params": {
             "nullable": true,
@@ -2503,7 +2518,10 @@
             "$ref": "#/components/schemas/ChartRestApi.get_list.SqlaTable"
           },
           "tags": {
-            "$ref": "#/components/schemas/ChartRestApi.get_list.Tag"
+            "items": {
+              "$ref": "#/components/schemas/ChartRestApi.get_list.Tag"
+            },
+            "type": "array"
           },
           "thumbnail_url": {
             "readOnly": true
@@ -3414,14 +3432,20 @@
             "type": "boolean"
           },
           "owners": {
-            "$ref": "#/components/schemas/DashboardRestApi.get_list.User2"
+            "items": {
+              "$ref": "#/components/schemas/DashboardRestApi.get_list.User2"
+            },
+            "type": "array"
           },
           "published": {
             "nullable": true,
             "type": "boolean"
           },
           "roles": {
-            "$ref": "#/components/schemas/DashboardRestApi.get_list.Role"
+            "items": {
+              "$ref": "#/components/schemas/DashboardRestApi.get_list.Role"
+            },
+            "type": "array"
           },
           "slug": {
             "maxLength": 255,
@@ -3432,7 +3456,10 @@
             "readOnly": true
           },
           "tags": {
-            "$ref": "#/components/schemas/DashboardRestApi.get_list.Tag"
+            "items": {
+              "$ref": "#/components/schemas/DashboardRestApi.get_list.Tag"
+            },
+            "type": "array"
           },
           "thumbnail_url": {
             "readOnly": true
@@ -5111,7 +5138,10 @@
             "readOnly": true
           },
           "columns": {
-            "$ref": "#/components/schemas/DatasetRestApi.get.TableColumn"
+            "items": {
+              "$ref": "#/components/schemas/DatasetRestApi.get.TableColumn"
+            },
+            "type": "array"
           },
           "created_by": {
             "$ref": "#/components/schemas/DatasetRestApi.get.User1"
@@ -5183,7 +5213,10 @@
             "type": "string"
           },
           "metrics": {
-            "$ref": "#/components/schemas/DatasetRestApi.get.SqlMetric"
+            "items": {
+              "$ref": "#/components/schemas/DatasetRestApi.get.SqlMetric"
+            },
+            "type": "array"
           },
           "name": {
             "readOnly": true
@@ -5200,7 +5233,10 @@
             "readOnly": true
           },
           "owners": {
-            "$ref": "#/components/schemas/DatasetRestApi.get.User"
+            "items": {
+              "$ref": "#/components/schemas/DatasetRestApi.get.User"
+            },
+            "type": "array"
           },
           "schema": {
             "maxLength": 255,
@@ -5498,7 +5534,10 @@
             "readOnly": true
           },
           "owners": {
-            "$ref": "#/components/schemas/DatasetRestApi.get_list.User1"
+            "items": {
+              "$ref": "#/components/schemas/DatasetRestApi.get_list.User1"
+            },
+            "type": "array"
           },
           "schema": {
             "maxLength": 255,
@@ -6202,10 +6241,16 @@
             "type": "string"
           },
           "roles": {
-            "$ref": "#/components/schemas/GroupApi.get.Role"
+            "items": {
+              "$ref": "#/components/schemas/GroupApi.get.Role"
+            },
+            "type": "array"
           },
           "users": {
-            "$ref": "#/components/schemas/GroupApi.get.User"
+            "items": {
+              "$ref": "#/components/schemas/GroupApi.get.User"
+            },
+            "type": "array"
           }
         },
         "required": ["name"],
@@ -6257,10 +6302,16 @@
             "type": "string"
           },
           "roles": {
-            "$ref": "#/components/schemas/GroupApi.get_list.Role"
+            "items": {
+              "$ref": "#/components/schemas/GroupApi.get_list.Role"
+            },
+            "type": "array"
           },
           "users": {
-            "$ref": "#/components/schemas/GroupApi.get_list.User"
+            "items": {
+              "$ref": "#/components/schemas/GroupApi.get_list.User"
+            },
+            "type": "array"
           }
         },
         "required": ["name"],
@@ -7686,10 +7737,16 @@
             "type": "string"
           },
           "owners": {
-            "$ref": "#/components/schemas/ReportScheduleRestApi.get.User"
+            "items": {
+              "$ref": "#/components/schemas/ReportScheduleRestApi.get.User"
+            },
+            "type": "array"
           },
           "recipients": {
-            "$ref": "#/components/schemas/ReportScheduleRestApi.get.ReportRecipients"
+            "items": {
+              "$ref": "#/components/schemas/ReportScheduleRestApi.get.ReportRecipients"
+            },
+            "type": "array"
           },
           "report_format": {
             "maxLength": 50,
@@ -7867,10 +7924,16 @@
             "type": "string"
           },
           "owners": {
-            "$ref": "#/components/schemas/ReportScheduleRestApi.get_list.User2"
+            "items": {
+              "$ref": "#/components/schemas/ReportScheduleRestApi.get_list.User2"
+            },
+            "type": "array"
           },
           "recipients": {
-            "$ref": "#/components/schemas/ReportScheduleRestApi.get_list.ReportRecipients"
+            "items": {
+              "$ref": "#/components/schemas/ReportScheduleRestApi.get_list.ReportRecipients"
+            },
+            "type": "array"
           },
           "timezone": {
             "maxLength": 100,
@@ -9731,7 +9794,10 @@
             "readOnly": true
           },
           "tags": {
-            "$ref": "#/components/schemas/SavedQueryRestApi.get_list.Tag"
+            "items": {
+              "$ref": "#/components/schemas/SavedQueryRestApi.get_list.Tag"
+            },
+            "type": "array"
           }
         },
         "type": "object"
@@ -10096,7 +10162,10 @@
             "type": "string"
           },
           "groups": {
-            "$ref": "#/components/schemas/SupersetUserApi.get.Group"
+            "items": {
+              "$ref": "#/components/schemas/SupersetUserApi.get.Group"
+            },
+            "type": "array"
           },
           "id": {
             "type": "integer"
@@ -10115,7 +10184,10 @@
             "type": "integer"
           },
           "roles": {
-            "$ref": "#/components/schemas/SupersetUserApi.get.Role"
+            "items": {
+              "$ref": "#/components/schemas/SupersetUserApi.get.Role"
+            },
+            "type": "array"
           },
           "username": {
             "maxLength": 128,
@@ -10212,7 +10284,10 @@
             "type": "string"
           },
           "groups": {
-            "$ref": "#/components/schemas/SupersetUserApi.get_list.Group"
+            "items": {
+              "$ref": "#/components/schemas/SupersetUserApi.get_list.Group"
+            },
+            "type": "array"
           },
           "id": {
             "type": "integer"
@@ -10231,7 +10306,10 @@
             "type": "integer"
           },
           "roles": {
-            "$ref": "#/components/schemas/SupersetUserApi.get_list.Role"
+            "items": {
+              "$ref": "#/components/schemas/SupersetUserApi.get_list.Role"
+            },
+            "type": "array"
           },
           "username": {
             "maxLength": 128,

@@ -27,6 +27,33 @@ import sys
 from pathlib import Path
 from typing import Any
 
+# Flask-AppBuilder names the schemas it derives from ``list_columns`` /
+# ``show_columns`` after the operation they document.
+FAB_GENERATED_SCHEMA_SUFFIXES = (".get", ".get_list")
+
+# Relationship properties that Flask-AppBuilder serializes as a list. Specs
+# generated before Flask-AppBuilder started passing ``many`` down to
+# ``fields.Nested`` render every nested relationship as a bare ``$ref``, so the
+# auto-generated schemas document these as a single object even though the API
+# returns an array.
+COLLECTION_RELATIONSHIP_PROPERTIES = frozenset(
+    {
+        "columns",
+        "custom_tags",
+        "dashboards",
+        "editors",
+        "groups",
+        "metrics",
+        "owners",
+        "recipients",
+        "roles",
+        "slices",
+        "tags",
+        "users",
+        "viewers",
+    }
+)
+
 
 def add_missing_schemas(spec: dict[str, Any]) -> tuple[dict[str, Any], list[str]]:
     """Add missing schema definitions to the OpenAPI spec."""
@@ -786,6 +813,33 @@ def make_summaries_unique(spec: dict[str, Any]) -> int:  # noqa: C901
     return fixed_count
 
 
+def fix_collection_relationship_refs(spec: dict[str, Any]) -> int:
+    """Document to-many relationships as arrays instead of single objects.
+
+    Flask-AppBuilder dumps a to-many relationship (``owners``, ``roles``,
+    ``tags``, ...) as a list of nested objects, but the auto-generated schemas
+    reference the nested schema directly, so generated clients break when they
+    receive an array where the spec promised an object.
+    """
+    fixed = 0
+
+    for schema_name, schema in spec.get("components", {}).get("schemas", {}).items():
+        if not schema_name.endswith(FAB_GENERATED_SCHEMA_SUFFIXES):
+            continue
+        properties = schema.get("properties", {})
+        for name, prop in properties.items():
+            if name not in COLLECTION_RELATIONSHIP_PROPERTIES:
+                continue
+            # Only a bare ``$ref`` is wrong; anything else was already resolved
+            # as an array (or carries sibling keywords we must not discard).
+            if not isinstance(prop, dict) or set(prop) != {"$ref"}:
+                continue
+            properties[name] = {"type": "array", "items": prop}
+            fixed += 1
+
+    return fixed
+
+
 def main() -> None:  # noqa: C901
     """Main function to fix the OpenAPI spec."""
     script_dir = Path(__file__).parent
@@ -837,6 +891,10 @@ def main() -> None:  # noqa: C901
 
     if fixed_summaries := make_summaries_unique(spec):
         print(f"Made {fixed_summaries} duplicate summaries unique")
+        changes_made = True
+
+    if fixed_collections := fix_collection_relationship_refs(spec):
+        print(f"Fixed {fixed_collections} to-many relationship properties")
         changes_made = True
 
     if changes_made:
