@@ -92,10 +92,12 @@ secretConfig:
 # -- The name of the secret which we will use to populate env vars in deployed pods
 # This can be useful for secret keys, etc.
 envFromSecret: '{{ template "superset.fullname" . }}-env'
-# -- This can be a list of templated strings
+# -- This can be a list of templated strings. They are loaded after `envFromSecret` in
+# every container, init containers included, so credentials kept in an externally
+# managed secret take precedence over the chart managed ones
 envFromSecrets: []
 
-# -- Extra environment variables that will be passed into pods
+# -- Extra environment variables that will be passed into pods, init containers included
 extraEnv: {}
   # Different gunicorn settings, refer to the gunicorn documentation
   # https://gunicorn.org/reference/settings/
@@ -118,7 +120,8 @@ extraEnv: {}
   # #   this includes any random Gmail address if your OAuth2 Web App is set to External.
   # OAUTH_WHITELIST_REGEX: ...
 
-# -- Extra environment variables in RAW format that will be passed into pods
+# -- Extra environment variables in RAW format that will be passed into pods, init
+# containers included
 extraEnvRaw: []
   # Load DB password from other secret (e.g. for zalando operator)
   # - name: DB_PASS

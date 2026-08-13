@@ -728,6 +728,45 @@ echo "Init job complete."
 {{- end -}}
 
 {{/*
+Render a list of init containers, appending the pod-wide environment
+(extraEnv, extraEnvRaw and envFromSecrets) to every one of them.
+
+Init containers only pull the chart-managed env secret, so credentials
+overridden at the pod level — a database password or host coming from an
+externally managed secret, for instance — never reached them and the
+wait-for-* containers kept probing the chart defaults. Whatever the container
+declares itself is kept first, so the pod-wide entries take precedence, which
+matches how the main containers resolve them.
+Usage: {{ include "superset.initContainers" (dict "containers" .Values.supersetNode.initContainers "root" .) }}
+*/}}
+{{- define "superset.initContainers" -}}
+{{- $root := .root -}}
+{{- $env := list -}}
+{{- range $key, $value := $root.Values.extraEnv -}}
+{{- $env = append $env (dict "name" $key "value" ($value | toString)) -}}
+{{- end -}}
+{{- range $value := $root.Values.extraEnvRaw -}}
+{{- $env = append $env $value -}}
+{{- end -}}
+{{- $envFrom := list -}}
+{{- range $secret := $root.Values.envFromSecrets -}}
+{{- $envFrom = append $envFrom (dict "secretRef" (dict "name" (tpl $secret $root))) -}}
+{{- end -}}
+{{- $containers := list -}}
+{{- range $container := .containers -}}
+{{- $container = deepCopy $container -}}
+{{- if $env -}}
+{{- $_ := set $container "env" (concat ($container.env | default list) $env) -}}
+{{- end -}}
+{{- if $envFrom -}}
+{{- $_ := set $container "envFrom" (concat ($container.envFrom | default list) $envFrom) -}}
+{{- end -}}
+{{- $containers = append $containers $container -}}
+{{- end -}}
+{{- tpl (toYaml $containers) $root -}}
+{{- end -}}
+
+{{/*
 Deprecation warnings — returns a newline-separated list of active deprecation messages,
 or empty string when no deprecated keys are set. Rendered in NOTES.txt after install/upgrade.
 */}}

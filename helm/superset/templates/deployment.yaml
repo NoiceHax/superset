@@ -86,10 +86,10 @@ spec:
       {{- if or .Values.supersetNode.initContainers .Values.supersetNode.extraInitContainers }}
       initContainers:
       {{- if .Values.supersetNode.initContainers }}
-      {{- tpl (toYaml .Values.supersetNode.initContainers) . | nindent 6 }}
+      {{- include "superset.initContainers" (dict "containers" .Values.supersetNode.initContainers "root" .) | nindent 6 }}
       {{- end }}
       {{- if .Values.supersetNode.extraInitContainers }}
-      {{- tpl (toYaml .Values.supersetNode.extraInitContainers) . | nindent 6 }}
+      {{- include "superset.initContainers" (dict "containers" .Values.supersetNode.extraInitContainers "root" .) | nindent 6 }}
       {{- end }}
       {{- end }}
       {{- with .Values.hostAliases }}

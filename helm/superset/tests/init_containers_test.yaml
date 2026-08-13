@@ -204,3 +204,121 @@ tests:
       - equal:
           path: spec.template.spec.initContainers[1].name
           value: prepare-assets
+
+  - it: leaves init containers alone when no pod environment is configured
+    template: deployment.yaml
+    asserts:
+      - notExists:
+          path: spec.template.spec.initContainers[0].env
+      - equal:
+          path: spec.template.spec.initContainers[0].envFrom
+          value:
+            - secretRef:
+                name: RELEASE-NAME-superset-env
+
+  - it: loads envFromSecrets in init containers, after the chart managed secret
+    template: deployment.yaml
+    set:
+      envFromSecrets:
+        - my-database-secret
+        - '{{ .Release.Name }}-templated-secret'
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].envFrom
+          value:
+            - secretRef:
+                name: RELEASE-NAME-superset-env
+            - secretRef:
+                name: my-database-secret
+            - secretRef:
+                name: RELEASE-NAME-templated-secret
+
+  - it: passes extraEnv and extraEnvRaw to init containers
+    template: deployment.yaml
+    set:
+      extraEnv:
+        GUNICORN_TIMEOUT: 300
+      extraEnvRaw:
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: my-database-secret
+              key: password
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].env
+          value:
+            - name: GUNICORN_TIMEOUT
+              value: "300"
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: my-database-secret
+                  key: password
+
+  - it: passes the pod environment to extraInitContainers too
+    template: deployment.yaml
+    set:
+      envFromSecrets:
+        - my-database-secret
+      supersetNode.extraInitContainers:
+        - name: prepare-assets
+          image: busybox
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[1].envFrom
+          value:
+            - secretRef:
+                name: my-database-secret
+
+  - it: passes the pod environment to the worker init containers
+    template: deployment-worker.yaml
+    set:
+      envFromSecrets:
+        - my-database-secret
+      extraEnvRaw:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: my-database-secret
+              key: host
+    asserts:
+      - contains:
+          path: spec.template.spec.initContainers[0].envFrom
+          content:
+            secretRef:
+              name: my-database-secret
+      - contains:
+          path: spec.template.spec.initContainers[0].env
+          content:
+            name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: my-database-secret
+                key: host
+
+  - it: passes the pod environment to the init job wait-for-postgres container
+    template: init-job.yaml
+    set:
+      envFromSecrets:
+        - my-database-secret
+      extraEnvRaw:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: my-database-secret
+              key: host
+    asserts:
+      - contains:
+          path: spec.template.spec.initContainers[0].envFrom
+          content:
+            secretRef:
+              name: my-database-secret
+      - contains:
+          path: spec.template.spec.initContainers[0].env
+          content:
+            name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: my-database-secret
+                key: host

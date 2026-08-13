@@ -64,10 +64,10 @@ spec:
       {{- if or .Values.supersetCeleryFlower.initContainers .Values.supersetCeleryFlower.extraInitContainers }}
       initContainers:
       {{- if .Values.supersetCeleryFlower.initContainers }}
-      {{-  tpl (toYaml .Values.supersetCeleryFlower.initContainers) . | nindent 6 }}
+      {{- include "superset.initContainers" (dict "containers" .Values.supersetCeleryFlower.initContainers "root" .) | nindent 6 }}
       {{- end }}
       {{- if .Values.supersetCeleryFlower.extraInitContainers }}
-      {{-  tpl (toYaml .Values.supersetCeleryFlower.extraInitContainers) . | nindent 6 }}
+      {{- include "superset.initContainers" (dict "containers" .Values.supersetCeleryFlower.extraInitContainers "root" .) | nindent 6 }}
       {{- end }}
       {{- end }}
       {{- with .Values.hostAliases }}
